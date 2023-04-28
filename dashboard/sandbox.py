@@ -67,17 +67,19 @@ def run_app():
                                 temperature=temperature,  # Controls the randomness and creativity of the generated text
                                 max_tokens=max_tokens,  # The maximum length of the generated text in terms of tokens (words or symbols)
                                 )
+                tokens = query_["usage"]["total_tokens"]
                 query_ = keyword + query_["choices"][0]["text"]
 
             elif model in ['gpt-3.5-turbo', 'gpt-4']:
                 query_ = openai.ChatCompletion.create(
                                 model="gpt-3.5-turbo",
                                 messages=[{"role": "user", "content": prompt},])
+                tokens = query_["usage"]["total_tokens"]
                 query_ = keyword + query_["choices"][0]["message"]["content"]
             
             with open('temp/last_query.txt','w') as f:
                 f.write(query_)
-            
+            st.write(f"Tokens used: {tokens}")
             # Save result to session state, to display it again upon query execution
             st.session_state.last_generated_query = query_
             code_raw = st.code(f"{query_}")
